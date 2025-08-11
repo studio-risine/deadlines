@@ -1,0 +1,43 @@
+{
+  "name": "tc96-next-starter",
+  "version": "0.0.3",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome check --write",
+    "lint:staged": "biome check --staged --write",
+    "lint:ci": "biome ci",
+    "check:updates": "npm-check-updates -i --color",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "next": "15.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@tailwindcss/postcss": "^4",
+    "@tc96/biome-config": "^1.1.1",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "husky": "^9.1.7",
+    "npm-check-updates": "^17.1.16",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@biomejs/biome",
+      "sharp"
+    ],
+    "onlyBuiltDependencies": [
+      "@biomejs/biome"
+    ]
+  }
+}
