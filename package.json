@@ -13,21 +13,21 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "next": "15.2.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "15.4.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@commitlint/cli": "^19.8.0",
-    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@tailwindcss/postcss": "^4",
-    "@tc96/biome-config": "^1.1.1",
-    "@types/node": "^22",
+    "@tc96/biome-config": "^1.1.3",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "husky": "^9.1.7",
-    "npm-check-updates": "^17.1.16",
+    "npm-check-updates": "^18.0.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
