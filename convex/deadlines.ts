@@ -1,13 +1,12 @@
+import { DEADLINE_TYPES } from '@/constants/deadline-types.js'
+import { PRIORITY_LEVELS } from '@/constants/priority-levels.js'
 // import { ResourceAlreadyExistsError } from '@workspace/errors'
 import { v } from 'convex/values'
 import { mutation, query } from './_generated/server.js'
 
 export const findMany = query({
-	args: {},
 	handler: async (ctx) => {
-		const processes = await ctx.db.query('processes').collect()
-
-		return processes
+		return ctx.db.query('deadlines').collect()
 	},
 })
 
@@ -79,28 +78,21 @@ export const update = mutation({
 
 export const create = mutation({
 	args: {
-		register: v.string(),
-		client: v.string(),
-		opposingParty: v.optional(v.string()),
-		status: v.optional(
-			v.union(v.literal('open'), v.literal('closed'), v.literal('pending')),
+		title: v.string(),
+		type: v.union(...DEADLINE_TYPES.map((type) => v.literal(type))),
+		priorityLevel: v.optional(
+			v.union(...PRIORITY_LEVELS.map((level) => v.literal(level))),
 		),
+		assignedTo: v.optional(v.string()),
+		infos: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
-		const existing = await ctx.db
-			.query('processes')
-			// .withIndex('by_register', (query) => query.eq('register', args.register))
-			.first()
-
-		// if (existing) {
-		// 	throw new ResourceAlreadyExistsError()
-		// }
-
-		return await ctx.db.insert('processes', {
-			register: args.register,
-			client: args.client,
-			opposingParty: args.opposingParty ?? null,
-			status: args.status ?? null,
+		return await ctx.db.insert('deadlines', {
+			title: args.title,
+			type: args.type,
+			priorityLevel: args.priorityLevel ?? 'medium',
+			assignedTo: args.assignedTo ?? undefined,
+			infos: args.infos ?? undefined,
 		})
 	},
 })
