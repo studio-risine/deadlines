@@ -13,6 +13,7 @@ import type {
 	FilterApi,
 	FunctionReference,
 } from 'convex/server'
+import type * as deadlines from '../deadlines.js'
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -22,7 +23,9 @@ import type {
  * const myFunctionReference = api.myModule.myFunction;
  * ```
  */
-declare const fullApi: ApiFromModules<{}>
+declare const fullApi: ApiFromModules<{
+	deadlines: typeof deadlines
+}>
 export declare const api: FilterApi<
 	typeof fullApi,
 	FunctionReference<any, 'public'>
