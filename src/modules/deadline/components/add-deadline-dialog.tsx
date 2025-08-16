@@ -33,6 +33,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 const formSchema = z.object({
 	title: z.string().min(1, {
@@ -228,6 +229,25 @@ export function AddDeadlineDialog() {
 													</SelectItem>
 												</SelectContent>
 											</Select>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+
+							<div className="col-span-full">
+								<FormField
+									control={form.control}
+									name="infos"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Observações</FormLabel>
+											<FormControl>
+												<Textarea
+													placeholder="Escreva uma observação para o prazo."
+													{...field}
+												/>
+											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
