@@ -7,16 +7,19 @@ import {
 	DataTableWrapper,
 	type FilterConfig,
 } from '@/components/ui/data-table-wrapper'
+import { useQueryDeadlines } from '@/hooks/deadline/use-query-deadline'
+import { useQuery } from 'convex/react'
+import { api } from '../../../../convex/_generated/api'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
-	data: TData[]
 }
 
 export function DataTable<TData, TValue>({
 	columns,
-	data,
 }: DataTableProps<TData, TValue>) {
+	const { deadlines } = useQueryDeadlines()
+
 	const filters: FilterConfig[] = [
 		{
 			id: 'status',
@@ -40,10 +43,10 @@ export function DataTable<TData, TValue>({
 
 	const columnLabels: ColumnLabelConfig = {
 		header: 'Processo',
-		description: 'Descrição',
+		Title: 'Descrição',
 		type: 'Tipo',
-		status: 'Status',
-		priority: 'Prioridade',
+		// status: 'Status',
+		priorityLevel: 'Prioridade',
 		limit: 'Prazo Fatal',
 		assigned: 'Responsável',
 	}
@@ -51,7 +54,7 @@ export function DataTable<TData, TValue>({
 	return (
 		<DataTableWrapper
 			columns={columns}
-			data={data}
+			data={deadlines ?? []}
 			searchColumn="header"
 			searchPlaceholder="Filtrar por processo ou descrição..."
 			filters={filters}

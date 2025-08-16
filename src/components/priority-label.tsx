@@ -1,32 +1,32 @@
-export type Priority = 'high' | 'medium' | 'low'
+import type { PriorityLevelType } from '@/types'
 
 type PriorityProps = {
-	value: Priority | null
+	level: PriorityLevelType | null
 }
 
-const PriorityMap: Record<Priority, string> = {
+const PriorityMap: Record<PriorityLevelType, string> = {
 	high: 'Alta',
 	medium: 'Média',
 	low: 'Baixa',
 }
 
-export function PriorityLabel({ value }: PriorityProps) {
-	if (!value) return
+export function PriorityLabel({ level }: PriorityProps) {
+	if (!level) return
 
 	return (
 		<div className="flex items-center gap-2">
-			{value === 'high' && (
+			{level === 'high' && (
 				<span data-testid="badge" className="h-2 w-2 rounded-full bg-red-500" />
 			)}
 
-			{value === 'medium' && (
+			{level === 'medium' && (
 				<span
 					data-testid="badge"
 					className="h-2 w-2 rounded-full bg-yellow-500"
 				/>
 			)}
 
-			{value === 'low' && (
+			{level === 'low' && (
 				<span
 					data-testid="badge"
 					className="h-2 w-2 rounded-full bg-green-500"
@@ -34,7 +34,7 @@ export function PriorityLabel({ value }: PriorityProps) {
 			)}
 
 			<span className="font-medium text-muted-foreground">
-				{PriorityMap[value]}
+				{PriorityMap[level]}
 			</span>
 		</div>
 	)

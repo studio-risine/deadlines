@@ -34,6 +34,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useCreateDeadline } from '@/hooks/deadline/use-create-deadline'
 
 const formSchema = z.object({
 	title: z.string().min(1, {
@@ -57,26 +58,35 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 export function AddDeadlineDialog() {
+	const { createDeadlineAsync, isSuccess, isPending } = useCreateDeadline()
+
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: '',
-			type: 'Contestação',
 			priorityLevel: 'medium',
-			assignedTo: '',
-			infos: '',
 		},
 	})
 
-	const onSubmit = (values: FormValues) => {
-		console.log(values)
+	function handleDialogOpen() {
 		form.reset()
+	}
+
+	function handleDialogClose() {
+		form.reset()
+	}
+
+	function onSubmit(values: FormValues) {
+		createDeadlineAsync(values)
+
+		if (isSuccess) {
+			form.reset()
+		}
 	}
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<Button>Adicionar Prazo</Button>
+			<DialogTrigger onClick={handleDialogOpen} asChild>
+				<Button>Adicionar novo</Button>
 			</DialogTrigger>
 
 			<DialogContent className="w-full max-w-2xl">
@@ -123,7 +133,7 @@ export function AddDeadlineDialog() {
 											<FormLabel>Tipo de Ato</FormLabel>
 											<Select
 												onValueChange={field.onChange}
-												defaultValue={field.value}
+												defaultValue={field.value ?? undefined}
 											>
 												<FormControl>
 													<SelectTrigger className="w-full">
@@ -135,7 +145,7 @@ export function AddDeadlineDialog() {
 														<span className="truncate">Contestação</span>
 													</SelectItem>
 													<SelectItem value="Audiência de Conciliação">
-														<span className="w-40 w-full truncate">
+														<span className="truncate">
 															Audiência de Conciliação
 														</span>
 													</SelectItem>
@@ -185,13 +195,13 @@ export function AddDeadlineDialog() {
 												</FormControl>
 												<SelectContent>
 													<SelectItem value="high">
-														<PriorityLabel value="high" />
+														<PriorityLabel level="high" />
 													</SelectItem>
 													<SelectItem value="medium">
-														<PriorityLabel value="medium" />
+														<PriorityLabel level="medium" />
 													</SelectItem>
 													<SelectItem value="low">
-														<PriorityLabel value="low" />
+														<PriorityLabel level="low" />
 													</SelectItem>
 												</SelectContent>
 											</Select>
@@ -258,11 +268,11 @@ export function AddDeadlineDialog() {
 				</Form>
 
 				<DialogFooter>
-					<DialogClose asChild>
+					<DialogClose onClick={handleDialogClose} asChild>
 						<Button variant="outline">Cancel</Button>
 					</DialogClose>
 					<Button type="submit" form="add-deadline-form">
-						Salvar Prazo
+						{isPending ? 'Salvando...' : 'Salvar Prazo'}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
