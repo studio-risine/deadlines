@@ -1,5 +1,6 @@
 'use client'
 
+import { PriorityLabel } from '@/components/priority-label'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -19,19 +20,19 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import type { PriorityLevelType } from '@/types'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { z } from 'zod'
 
-// Schema para validação dos dados
 export const deadlineSchema = z.object({
 	id: z.number(),
 	header: z.string(),
-	description: z.string(),
+	title: z.string(),
 	type: z.string(),
 	status: z.string(),
 	limit: z.string(),
-	priority: z.string(),
+	priorityLevel: z.enum(['high', 'medium', 'low']),
 	assigned: z.string(),
 })
 
@@ -39,60 +40,36 @@ export type Deadline = z.infer<typeof deadlineSchema>
 
 export const columns: ColumnDef<Deadline>[] = [
 	{
-		id: 'select',
-		header: ({ table }) => (
-			<Checkbox
-				checked={
-					table.getIsAllPageRowsSelected() ||
-					(table.getIsSomePageRowsSelected() && 'indeterminate')
-				}
-				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-				aria-label="Select all"
-				className="translate-y-[2px]"
-			/>
-		),
-		cell: ({ row }) => (
-			<Checkbox
-				checked={row.getIsSelected()}
-				onCheckedChange={(value) => row.toggleSelected(!!value)}
-				aria-label="Select row"
-				className="translate-y-[2px]"
-			/>
-		),
-		enableSorting: false,
-		enableHiding: false,
-	},
-	{
 		accessorKey: 'header',
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-				>
-					Processo
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			)
-		},
+		header: 'Processo',
 		cell: ({ row }) => (
 			<div className="font-medium">{row.getValue('header')}</div>
 		),
 	},
 	{
-		accessorKey: 'description',
-		header: 'Descrição',
+		accessorKey: 'title',
+		header: 'Title',
 		cell: ({ row }) => (
 			<div className="max-w-sm">
 				<p className="w-full truncate text-muted-foreground text-sm">
-					{row.getValue('description')}
+					{row.getValue('title')}
 				</p>
 			</div>
 		),
 	},
 	{
 		accessorKey: 'type',
-		header: 'Tipo',
+		header: ({ column }) => {
+			return (
+				<Button
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Tipo
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			)
+		},
 		cell: ({ row }) => (
 			<Badge variant="outline" className="px-2 py-1">
 				{row.getValue('type')}
@@ -102,26 +79,26 @@ export const columns: ColumnDef<Deadline>[] = [
 			return value.includes(row.getValue(id))
 		},
 	},
+	// {
+	// 	accessorKey: 'status',
+	// 	header: 'Status',
+	// 	cell: ({ row }) => {
+	// 		const status = row.getValue('status') as string
+	// 		return (
+	// 			<Badge
+	// 				variant={status === 'Vencido' ? 'destructive' : 'secondary'}
+	// 				className="px-2 py-1"
+	// 			>
+	// 				{status}
+	// 			</Badge>
+	// 		)
+	// 	},
+	// 	filterFn: (row, id, value) => {
+	// 		return value.includes(row.getValue(id))
+	// 	},
+	// },
 	{
-		accessorKey: 'status',
-		header: 'Status',
-		cell: ({ row }) => {
-			const status = row.getValue('status') as string
-			return (
-				<Badge
-					variant={status === 'Vencido' ? 'destructive' : 'secondary'}
-					className="px-2 py-1"
-				>
-					{status}
-				</Badge>
-			)
-		},
-		filterFn: (row, id, value) => {
-			return value.includes(row.getValue(id))
-		},
-	},
-	{
-		accessorKey: 'priority',
+		accessorKey: 'priorityLevel',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -134,64 +111,48 @@ export const columns: ColumnDef<Deadline>[] = [
 			)
 		},
 		cell: ({ row }) => {
-			const priority = row.getValue('priority') as string
+			const priority = row.getValue('priorityLevel') as PriorityLevelType
+
 			return (
-				<Badge
-					variant={
-						priority === 'Alta'
-							? 'destructive'
-							: priority === 'Média'
-								? 'default'
-								: 'secondary'
-					}
-					className="px-2 py-1"
-				>
-					{priority}
+				<Badge variant="outline" className="px-2 py-1">
+					<PriorityLabel level={priority} />
 				</Badge>
 			)
 		},
-		sortingFn: (rowA, rowB, columnId) => {
-			const priorityOrder = { Alta: 3, Média: 2, Baixa: 1 }
-			const a =
-				priorityOrder[rowA.getValue(columnId) as keyof typeof priorityOrder]
-			const b =
-				priorityOrder[rowB.getValue(columnId) as keyof typeof priorityOrder]
-			return a - b
-		},
 	},
-	{
-		accessorKey: 'limit',
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-				>
-					Prazo Fatal
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			)
-		},
-		cell: ({ row }) => {
-			const limit = row.getValue('limit') as string
-			const today = new Date()
-			const limitDate = new Date(limit.split('/').reverse().join('-'))
-			const isOverdue = limitDate < today
+	// {
+	// 	accessorKey: 'limit',
+	// 	header: ({ column }) => {
+	// 		return (
+	// 			<Button
+	// 				variant="ghost"
+	// 				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+	// 			>
+	// 				Prazo Fatal
+	// 				<ArrowUpDown className="ml-2 h-4 w-4" />
+	// 			</Button>
+	// 		)
+	// 	},
+	// 	cell: ({ row }) => {
+	// 		const limit = row.getValue('limit') as string
+	// 		const today = new Date()
+	// 		const limitDate = new Date(limit.split('/').reverse().join('-'))
+	// 		const isOverdue = limitDate < today
 
-			return (
-				<div
-					className={`font-medium ${isOverdue ? 'text-red-600' : 'text-foreground'}`}
-				>
-					{limit}
-				</div>
-			)
-		},
-	},
+	// 		return (
+	// 			<div
+	// 				className={`font-medium ${isOverdue ? 'text-red-600' : 'text-foreground'}`}
+	// 			>
+	// 				{limit}
+	// 			</div>
+	// 		)
+	// 	},
+	// },
 	{
-		accessorKey: 'assigned',
+		accessorKey: 'assignedTo',
 		header: 'Responsável',
 		cell: ({ row }) => {
-			const assigned = row.getValue('assigned') as string
+			const assigned = row.getValue('assignedTo') as string
 			const isAssigned = assigned !== 'Assigned to'
 
 			if (isAssigned) {
