@@ -6,6 +6,21 @@ import { api } from '../../../convex/_generated/api'
 
 const SCALE_TIME = 10 * 60 * 1000 // 10min
 
+/**
+ * React hook that subscribes to all deadlines from the Convex API and exposes loading/error state.
+ *
+ * Uses `convexQuery(api.deadlines.findMany, {})` spread into a TanStack `useQuery` with:
+ * - `initialData` set to an empty array
+ * - `staleTime` set to `SCALE_TIME` (10 minutes)
+ * - `gcTime` set to 10000 (10 seconds)
+ *
+ * The hook logs the fetched data to the console as a side effect.
+ *
+ * @returns An object with:
+ * - `deadlines` — the query data (array of deadlines, initially `[]`)
+ * - `isLoading` — `true` while the query is loading
+ * - `isError` — `true` if the query encountered an error
+ */
 export function useQueryDeadlines() {
 	const { data, isLoading, isError } = useQuery({
 		...convexQuery(api.deadlines.findMany, {}),

@@ -24,6 +24,16 @@ const queryClient = new QueryClient({
 })
 convexQueryClient.connect(queryClient)
 
+/**
+ * Wraps children with theme, authentication, Convex, and React Query providers.
+ *
+ * This component composes NextThemesProvider (theme handling), ConvexProviderWithClerk (Convex client + Clerk auth),
+ * and QueryClientProvider (TanStack Query) so descendant components have access to theme context, authenticated
+ * Convex client operations, and the configured React Query client.
+ *
+ * @param children - The React node(s) to render inside the provider tree.
+ * @returns A JSX element that provides theme, auth/Convex, and React Query contexts to `children`.
+ */
 export function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<NextThemesProvider

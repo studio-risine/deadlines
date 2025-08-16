@@ -13,6 +13,21 @@ type CreateDeadlineArgs = {
 	infos?: string
 }
 
+/**
+ * Hook that provides helpers to create a deadline via the Convex API and exposes mutation state.
+ *
+ * Uses a Convex mutation (api.deadlines.create) integrated with React Query. On successful creation it invalidates the 'deadlines' query so related lists are refetched. Exposes both a synchronous fire-and-forget `createDeadline` and an async `createDeadlineAsync`, plus mutation state and control.
+ *
+ * @returns An object with:
+ * - `createDeadline(args)` — trigger the mutation (non-async).
+ * - `createDeadlineAsync(args)` — trigger the mutation and await its result.
+ * - `isPending` — true while the mutation is in flight.
+ * - `isSuccess` — true if the last mutation succeeded.
+ * - `isError` — true if the last mutation failed.
+ * - `error` — error object from the last mutation, if any.
+ * - `data` — data returned by the mutation on success.
+ * - `reset()` — reset the mutation state.
+ */
 export function useCreateDeadline() {
 	const queryClient = useQueryClient()
 

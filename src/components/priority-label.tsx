@@ -10,6 +10,17 @@ const PriorityMap: Record<PriorityLevelType, string> = {
 	low: 'Baixa',
 }
 
+/**
+ * Renders a priority label with a colored badge and the Portuguese label for the given priority level.
+ *
+ * If `level` is falsy the component renders nothing. For a valid level it shows a small colored dot and the corresponding label:
+ * - 'high' → red dot, "Alta"
+ * - 'medium' → yellow dot, "Média"
+ * - 'low' → green dot, "Baixa"
+ *
+ * @param level - The priority level to display; when falsy the component returns nothing.
+ * @returns A JSX element with the badge and label when `level` is provided, otherwise `undefined`.
+ */
 export function PriorityLabel({ level }: PriorityProps) {
 	if (!level) return
 

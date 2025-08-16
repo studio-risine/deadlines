@@ -57,6 +57,22 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
+/**
+ * Modal dialog component that renders a form to create a new deadline.
+ *
+ * The form is managed with react-hook-form and validated with the file's Zod schema:
+ * - `title` is required.
+ * - `type` is required and must be one of the predefined act types.
+ * - `priorityLevel` is optional (defaults to `'medium'`).
+ * - `assignedTo` and `infos` are optional.
+ *
+ * Side effects:
+ * - Calls `createDeadlineAsync` (from `useCreateDeadline`) on submit.
+ * - Resets the form when the dialog opens or closes, and after a successful creation.
+ * - While the create operation is pending, the submit button label changes to "Salvando...".
+ *
+ * @returns A React element rendering the "Adicionar Prazo" dialog and its form.
+ */
 export function AddDeadlineDialog() {
 	const { createDeadlineAsync, isSuccess, isPending } = useCreateDeadline()
 

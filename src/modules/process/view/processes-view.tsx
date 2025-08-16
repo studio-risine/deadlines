@@ -3,6 +3,17 @@ import { columns } from '../components/columns'
 import { DataTable } from '../components/data-table'
 import { PageProcessActions } from '../components/page-actions'
 
+/**
+ * Renders the Processes view: a page header with actions and a table of processes.
+ *
+ * The component returns the static layout for the "Processos" page: a PageHeader
+ * containing PageProcessActions and a DataTable configured with the imported
+ * `columns` definition. No props, state, or data fetching are handled here;
+ * commented placeholders indicate where summary cards and interactive charts
+ * may be added in the future.
+ *
+ * @returns The JSX element for the Processes page.
+ */
 export function ProcessesView() {
 	return (
 		<>

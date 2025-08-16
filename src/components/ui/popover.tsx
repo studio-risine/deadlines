@@ -5,18 +5,43 @@ import type * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/**
+ * Wrapper around Radix UI's Popover root that standardizes slot attribute and forwards props.
+ *
+ * Renders a PopoverPrimitive.Root with data-slot="popover" and forwards all received props.
+ *
+ * @returns The Popover root element.
+ */
 function Popover({
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
 	return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
+/**
+ * A thin wrapper around Radix's Popover Trigger that marks the element for tooling.
+ *
+ * Renders PopoverPrimitive.Trigger and forwards all received props to it. Adds
+ * the attribute `data-slot="popover-trigger"` for consistent identification.
+ */
 function PopoverTrigger({
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
 	return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 }
 
+/**
+ * Popover content rendered inside a Portal with standardized styling and animations.
+ *
+ * Renders Radix's PopoverPrimitive.Content wrapped in a Portal, applies a composed
+ * set of utility classes for entrance/exit animations, sizing, and positioning, and
+ * merges any provided `className`. Also sets `data-slot="popover-content"`.
+ *
+ * @param className - Additional class names to merge with the default styling.
+ * @param align - Content alignment relative to the trigger (defaults to `'center'`).
+ * @param sideOffset - Offset in pixels from the trigger on the chosen side (defaults to `4`).
+ * @returns A React element representing the popover content.
+ */
 function PopoverContent({
 	className,
 	align = 'center',
@@ -39,6 +64,14 @@ function PopoverContent({
 	)
 }
 
+/**
+ * Wraps Radix's Popover Anchor primitive and forwards all props.
+ *
+ * This component renders `PopoverPrimitive.Anchor` with a `data-slot="popover-anchor"`
+ * attribute for identification and forwards any received props (including children and event handlers).
+ *
+ * @returns A React element rendering the Radix Popover Anchor.
+ */
 function PopoverAnchor({
 	...props
 }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {

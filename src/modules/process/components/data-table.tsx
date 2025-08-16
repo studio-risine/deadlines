@@ -13,6 +13,16 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
 }
 
+/**
+ * Generic React data-table component for rendering process records.
+ *
+ * Renders a DataTableWrapper preconfigured for process data: it fetches processes via
+ * `useQueryProcesses`, supplies a status filter, localized column labels, search settings,
+ * row selection, column visibility controls, and pagination defaults.
+ *
+ * @param columns - Column definitions passed to the underlying table (array of `ColumnDef<TData, TValue>`).
+ * @returns A JSX element containing the configured DataTableWrapper.
+ */
 export function DataTable<TData, TValue>({
 	columns,
 }: DataTableProps<TData, TValue>) {
