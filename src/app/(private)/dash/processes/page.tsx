@@ -1,5 +1,5 @@
-import { ProcessView } from '@/modules/process/view/process-view'
+import { ProcessesView } from '@/modules/process/view/processes-view'
 
 export default function Page() {
-	return <ProcessView />
+	return <ProcessesView />
 }

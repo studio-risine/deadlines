@@ -1,9 +1,10 @@
+import { PageActions } from '@/components/page-actions'
 import { AddDeadlineDialog } from './add-deadline-dialog'
 
-export function PageActions() {
+export function PageDeadlineActions() {
 	return (
-		<div className="flex justify-between">
+		<PageActions>
 			<AddDeadlineDialog />
-		</div>
+		</PageActions>
 	)
 }
