@@ -16,6 +16,7 @@ import type {
 import type * as deadlines_create from "../deadlines/create.js";
 import type * as deadlines_findById from "../deadlines/findById.js";
 import type * as deadlines from "../deadlines.js";
+import type * as processes from "../processes.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   "deadlines/create": typeof deadlines_create;
   "deadlines/findById": typeof deadlines_findById;
   deadlines: typeof deadlines;
+  processes: typeof processes;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
