@@ -13,6 +13,14 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { AddProcessForm } from './add-process-form'
 
+/**
+ * Displays a button labeled "Adicionar" that opens a modal dialog containing the AddProcessForm.
+ *
+ * The component manages the dialog open state locally. When the child form invokes the provided
+ * onSuccess handler, the dialog is closed.
+ *
+ * @returns The React element rendering the add-process dialog and trigger button.
+ */
 export function AddProcessDialog() {
 	const [open, setOpen] = useState(false)
 

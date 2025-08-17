@@ -15,6 +15,15 @@ interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
 }
 
+/**
+ * Renders a configurable data table for deadlines using the provided column definitions.
+ *
+ * This client component fetches deadline rows via `useQueryDeadlines()` and passes them,
+ * along with search, filter, column label and pagination configuration, into `DataTableWrapper`.
+ *
+ * @param columns - Column definitions (TanStack ColumnDef) that determine table columns and cell rendering.
+ * @returns A React element containing the configured DataTableWrapper populated with deadline data.
+ */
 export function DataTable<TData, TValue>({
 	columns,
 }: DataTableProps<TData, TValue>) {

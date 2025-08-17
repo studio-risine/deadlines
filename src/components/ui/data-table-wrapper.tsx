@@ -75,6 +75,25 @@ interface DataTableWrapperProps<TData, TValue> {
 	pageSizeOptions?: number[]
 }
 
+/**
+ * Renders a configurable, feature-rich data table built on TanStack React Table.
+ *
+ * The component provides global search (targeting a configurable column), per-column filters
+ * (text or select), column visibility toggles, optional row selection, and pagination with
+ * page-size controls. UI labels and placeholders in this implementation are in Portuguese.
+ *
+ * Notable props and default behaviors:
+ * - `searchColumn` (default: `"header"`): column id used for the global search input.
+ * - `filters` (default: `[]`): list of per-column filters; each can be `text` or `select`.
+ * - `enableRowSelection` (default: `true`) and `enableColumnVisibility` (default: `true`) toggle
+ *   the respective UI and state handling.
+ * - `pageSize` (default: `10`) and `pageSizeOptions` (default: `[10, 20, 30, 40, 50]`) control pagination.
+ *
+ * The component is generic over table row data (`TData`) and cell value type (`TValue`) and expects
+ * `columns` to be TanStack ColumnDef definitions and `data` to be the array of rows to display.
+ *
+ * @returns A React element containing the rendered data table and its controls.
+ */
 export function DataTableWrapper<TData, TValue>({
 	columns,
 	data,

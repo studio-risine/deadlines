@@ -24,6 +24,15 @@ function SelectValue({
 	return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+/**
+ * Styled wrapper around Radix Select.Trigger that forwards props and renders a trailing chevron icon.
+ *
+ * Renders a trigger element with internal slot "select-trigger", responsive sizing, and consistent styling for states
+ * (focus, disabled, invalid, dark mode). All other props are forwarded to the underlying Radix `SelectPrimitive.Trigger`.
+ *
+ * @param size - Visual size of the trigger; 'sm' for compact, 'default' for the standard height.
+ * @returns A React element wrapping `SelectPrimitive.Trigger`.
+ */
 function SelectTrigger({
 	className,
 	size = 'default',

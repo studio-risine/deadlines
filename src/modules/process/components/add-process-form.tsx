@@ -41,6 +41,15 @@ interface AddProcessFormProps {
 	onSuccess?: () => void
 }
 
+/**
+ * Renders a form to create a new process and submits it via the createProcess hook.
+ *
+ * The form validates fields (required: `register`, `client`; optional: `opposingParty`; `status` is an enum).
+ * On successful submission it shows a success toast, resets the form, and invokes `onSuccess` if provided.
+ * When `opposingParty` is empty it is sent as `undefined`. The submit button is disabled while submission is in progress.
+ *
+ * @param onSuccess - Optional callback invoked after a successful process creation.
+ */
 export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 	const { createProcess } = useCreateProcess()
 

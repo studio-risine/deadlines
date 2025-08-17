@@ -2,6 +2,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Stateless textarea component with base styling.
+ *
+ * Renders a <textarea> with a predefined set of utility classes and forwards all native textarea attributes.
+ *
+ * @param className - Optional additional CSS class names appended to the component's base styles.
+ * @param props - Remaining native textarea props (attributes and event handlers) forwarded to the underlying element.
+ * @returns The rendered textarea element.
+ */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea

@@ -4,6 +4,15 @@ import { columns } from '../components/columns'
 import { DataTable } from '../components/data-table'
 import { PageDeadlineActions } from '../components/page-actions'
 
+/**
+ * Renders the "Meus Prazos" page: site header, page header with actions, and the deadlines data table.
+ *
+ * This is a presentational component that composes SiteHeader, PageHeader (with PageDeadlineActions),
+ * and DataTable (configured with the imported `columns`). Optional overview sections (cards, chart)
+ * are currently commented out.
+ *
+ * @returns The page's JSX element.
+ */
 export function DeadlinesView() {
 	return (
 		<>
