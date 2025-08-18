@@ -2,6 +2,7 @@
 
 import type { Icon } from '@tabler/icons-react'
 
+import Link from 'next/link'
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -26,10 +27,13 @@ export function NavMain({
 					{items.map((item) => (
 						<SidebarMenuItem key={item.title}>
 							<SidebarMenuButton tooltip={item.title}>
-								<a href={item.url} className="flex items-center gap-2">
+								<Link
+									href={item.url}
+									className="flex w-full grow items-center gap-2"
+								>
 									{item.icon && <item.icon className="size-3" />}
 									<span>{item.title}</span>
-								</a>
+								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
