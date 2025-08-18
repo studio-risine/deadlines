@@ -10,20 +10,14 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { PROCESS_STATUS } from '@/constants/process'
+import type { Process } from '@/types/process'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import { z } from 'zod'
-
-export const processSchema = z.object({
-	_id: z.string(),
-	register: z.string(),
-	client: z.string(),
-	opposingParty: z.string().nullable(),
-	status: z.enum(['open', 'closed', 'pending']).nullable(),
-	_creationTime: z.number(),
-})
-
-export type Process = z.infer<typeof processSchema>
+import { useState } from 'react'
+import { DeleteProcessDialog } from './delete-process-dialog'
+import { EditProcessDialog } from './edit-process-dialog'
+import { ViewProcessDialog } from './view-process-dialog'
 
 export const columns: ColumnDef<Process>[] = [
 	{
@@ -86,28 +80,24 @@ export const columns: ColumnDef<Process>[] = [
 
 			const getStatusVariant = (status: string | null) => {
 				switch (status) {
-					case 'open':
+					case 'active':
 						return 'default'
 					case 'closed':
+					case 'dismissed':
 						return 'secondary'
-					case 'pending':
+					case 'suspended':
+					case 'undefined':
 						return 'outline'
+					case 'archived':
+						return 'destructive'
 					default:
 						return 'outline'
 				}
 			}
 
 			const getStatusLabel = (status: string | null) => {
-				switch (status) {
-					case 'open':
-						return 'Aberto'
-					case 'closed':
-						return 'Fechado'
-					case 'pending':
-						return 'Pendente'
-					default:
-						return 'Sem status'
-				}
+				const statusObj = PROCESS_STATUS.find(s => s.value === status)
+				return statusObj?.label ?? 'Sem status'
 			}
 
 			return (
@@ -146,32 +136,62 @@ export const columns: ColumnDef<Process>[] = [
 		enableHiding: false,
 		cell: ({ row }) => {
 			const process = row.original
+			const [editOpen, setEditOpen] = useState(false)
+			const [deleteOpen, setDeleteOpen] = useState(false)
+			const [viewOpen, setViewOpen] = useState(false)
 
 			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Abrir menu</span>
-							<MoreHorizontal className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Ações</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(process.register)}
-						>
-							Copiar número do processo
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>Visualizar detalhes</DropdownMenuItem>
-						<DropdownMenuItem>Editar processo</DropdownMenuItem>
-						<DropdownMenuItem>Ver prazos</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem className="text-destructive">
-							Excluir
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant="ghost" className="h-8 w-8 p-0">
+								<span className="sr-only">Abrir menu</span>
+								<MoreHorizontal className="h-4 w-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuLabel>Ações</DropdownMenuLabel>
+							<DropdownMenuItem
+								onClick={() => navigator.clipboard.writeText(process.register)}
+							>
+								Copiar número do processo
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem onClick={() => setViewOpen(true)}>
+								Visualizar detalhes
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setEditOpen(true)}>
+								Editar processo
+							</DropdownMenuItem>
+							<DropdownMenuItem>Ver prazos</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-destructive"
+								onClick={() => setDeleteOpen(true)}
+							>
+								Excluir
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<ViewProcessDialog
+						process={process}
+						open={viewOpen}
+						onOpenChange={setViewOpen}
+					/>
+
+					<EditProcessDialog
+						process={process}
+						open={editOpen}
+						onOpenChange={setEditOpen}
+					/>
+
+					<DeleteProcessDialog
+						process={process}
+						open={deleteOpen}
+						onOpenChange={setDeleteOpen}
+					/>
+				</>
 			)
 		},
 	},

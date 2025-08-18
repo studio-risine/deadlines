@@ -4,42 +4,39 @@ import { useConvexMutation } from '@convex-dev/react-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api } from '../../../convex/_generated/api'
-import type { ProcessType } from '@/types/process'
+import type { Id } from '../../../convex/_generated/dataModel'
 
-type CreateProcessArgs = {
-	register: string
-	client: string
-	opposingParty?: string
-	status?: ProcessType
+type DeleteProcessArgs = {
+	id: Id<'processes'>
 }
 
-export function useCreateProcess() {
+export function useDeleteProcess() {
 	const queryClient = useQueryClient()
 
 	const mutation = useMutation({
-		mutationFn: useConvexMutation(api.processes.create),
+		mutationFn: useConvexMutation(api.processes.remove),
 
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['processes'] })
-			toast.success('Processo criado com sucesso!')
+			toast.success('Processo excluído com sucesso!')
 		},
 		onError: (error) => {
-			console.error('Erro ao criar processo:', error)
-			toast.error('Erro ao criar processo. Tente novamente.')
+			console.error('Erro ao excluir processo:', error)
+			toast.error('Erro ao excluir processo. Tente novamente.')
 		},
 	})
 
-	const createProcess = (args: CreateProcessArgs) => {
+	const deleteProcess = (args: DeleteProcessArgs) => {
 		return mutation.mutate(args)
 	}
 
-	const createProcessAsync = async (args: CreateProcessArgs) => {
+	const deleteProcessAsync = async (args: DeleteProcessArgs) => {
 		return mutation.mutateAsync(args)
 	}
 
 	return {
-		createProcess,
-		createProcessAsync,
+		deleteProcess,
+		deleteProcessAsync,
 		isPending: mutation.isPending,
 		isSuccess: mutation.isSuccess,
 		isError: mutation.isError,

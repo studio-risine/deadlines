@@ -7,6 +7,7 @@ import {
 	DataTableWrapper,
 	type FilterConfig,
 } from '@/components/ui/data-table-wrapper'
+import { PROCESS_STATUS } from '@/constants/process'
 import { useQueryProcesses } from '@/hooks/process/use-query-process'
 
 interface DataTableProps<TData, TValue> {
@@ -22,11 +23,7 @@ export function DataTable<TData, TValue>({
 		{
 			id: 'status',
 			placeholder: 'Filtrar por status',
-			options: [
-				{ value: 'open', label: 'Aberto' },
-				{ value: 'closed', label: 'Fechado' },
-				{ value: 'pending', label: 'Pendente' },
-			],
+			options: PROCESS_STATUS,
 		},
 	]
 

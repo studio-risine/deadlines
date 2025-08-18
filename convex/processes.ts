@@ -46,7 +46,14 @@ export const update = mutation({
 		client: v.optional(v.string()),
 		opposingParty: v.optional(v.string()),
 		status: v.optional(
-			v.union(v.literal('open'), v.literal('closed'), v.literal('pending')),
+			v.union(
+				v.literal('active'),
+				v.literal('undefined'),
+				v.literal('dismissed'),
+				v.literal('closed'),
+				v.literal('suspended'),
+				v.literal('archived')
+			),
 		),
 	},
 	handler: async (ctx, args) => {
@@ -55,7 +62,7 @@ export const update = mutation({
 		const processUpdates: Partial<{
 			client: string
 			opposingParty: string | null
-			status: 'open' | 'closed' | 'pending' | null
+			status: 'active' | 'undefined' | 'dismissed' | 'closed' | 'suspended' | 'archived' | null
 		}> = {}
 
 		if (updates.client !== undefined) {
@@ -80,7 +87,14 @@ export const create = mutation({
 		client: v.string(),
 		opposingParty: v.optional(v.string()),
 		status: v.optional(
-			v.union(v.literal('open'), v.literal('closed'), v.literal('pending')),
+			v.union(
+				v.literal('active'),
+				v.literal('undefined'),
+				v.literal('dismissed'),
+				v.literal('closed'),
+				v.literal('suspended'),
+				v.literal('archived')
+			),
 		),
 	},
 	handler: async (ctx, args) => {

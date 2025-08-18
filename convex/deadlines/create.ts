@@ -25,8 +25,8 @@ export const create = mutation({
 			title: args.title,
 			type: args.type,
 			priorityLevel: args.priorityLevel ?? 'medium',
-			assignedTo: args.assignedTo ?? null,
-			infos: args.infos ?? null,
+			assignedTo: args.assignedTo,
+			infos: args.infos,
 		})
 	},
 })

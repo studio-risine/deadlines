@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import type { Id } from '../../../../convex/_generated/dataModel'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -21,39 +22,43 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { PROCESS_STATUS } from '@/constants/process'
-import { useCreateProcess } from '@/hooks/process/use-create-process'
-import { type ProcessFormValues, processFormSchema } from '@/types/process'
+import { useUpdateProcess } from '@/hooks/process/use-update-process'
+import {
+	type Process,
+	type ProcessFormValues,
+	processFormSchema,
+} from '@/types/process'
 
-interface AddProcessFormProps {
+interface EditProcessFormProps {
+	process: Process
 	onSuccess?: () => void
 }
 
-export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
-	const { createProcessAsync, isPending } = useCreateProcess()
+export function EditProcessForm({ process, onSuccess }: EditProcessFormProps) {
+	const { updateProcessAsync, isPending } = useUpdateProcess()
 
 	const form = useForm<ProcessFormValues>({
 		resolver: zodResolver(processFormSchema),
 		defaultValues: {
-			register: '',
-			client: '',
-			opposingParty: '',
-			status: 'active',
+			register: process.register,
+			client: process.client,
+			opposingParty: process.opposingParty || '',
+			status: process.status || 'active',
 		},
 	})
 
 	async function onSubmit(values: ProcessFormValues) {
 		try {
-			await createProcessAsync({
-				register: values.register,
+			await updateProcessAsync({
+				id: process._id as Id<'processes'>,
 				client: values.client,
 				opposingParty: values.opposingParty || undefined,
 				status: values.status,
 			})
 
-			form.reset()
 			onSuccess?.()
 		} catch (error) {
-			console.error('Erro ao criar processo:', error)
+			console.error('Erro ao atualizar processo:', error)
 		}
 	}
 
@@ -67,7 +72,12 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 						<FormItem>
 							<FormLabel>Número do Processo *</FormLabel>
 							<FormControl>
-								<Input placeholder="Ex: 1234567-89.2024.8.26.0001" {...field} />
+								<Input
+									placeholder="Ex: 1234567-89.2024.8.26.0001"
+									{...field}
+									disabled
+									className="bg-muted"
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -131,7 +141,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 				/>
 
 				<div className="flex justify-end space-x-2">
-					<Button type="button" variant="outline" onClick={() => form.reset()}>
+					<Button type="button" variant="outline" onClick={onSuccess}>
 						Cancelar
 					</Button>
 					<Button type="submit" disabled={isPending}>
