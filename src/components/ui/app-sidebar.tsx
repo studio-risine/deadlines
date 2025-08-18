@@ -15,6 +15,8 @@ import {
 	SidebarMenuItem,
 } from './sidebar'
 
+import { RiArticleLine, RiCheckLine, RiHome2Line } from '@remixicon/react'
+
 const data = {
 	user: {
 		name: 'shadcn',
@@ -25,17 +27,17 @@ const data = {
 		{
 			title: 'Dashboard',
 			url: '/dash',
-			// icon: IconDashboard,
+			icon: RiHome2Line,
 		},
 		{
 			title: 'Processos',
 			url: '/dash/processes',
-			// icon: IconListDetails,
+			icon: RiArticleLine,
 		},
 		{
 			title: 'Prazos',
 			url: '/dash/deadlines',
-			// icon: IconChartBar,
+			icon: RiCheckLine,
 		},
 	],
 	navSecondary: [
