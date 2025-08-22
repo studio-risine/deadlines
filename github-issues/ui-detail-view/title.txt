@@ -1,0 +1,1 @@
+Implement Process Detail View UI Component
