@@ -168,9 +168,9 @@ Note: `paginationOpts` is an object with the following properties:
 - `numItems`: the maximum number of documents to return (the validator is `v.number()`)
 - `cursor`: the cursor to use to fetch the next page of documents (the validator is `v.union(v.string(), v.null())`)
 - A query that ends in `.paginate()` returns an object that has the following properties:
-                            - page (contains an array of documents that you fetches)
-                            - isDone (a boolean that represents whether or not this is the last page of documents)
-                            - continueCursor (a string that represents the cursor to use to fetch the next page of documents)
+  - page (contains an array of documents that you fetch)
+  - isDone (a boolean that represents whether or not this is the last page of documents)
+  - continueCursor (a string that represents the cursor to use to fetch the next page of documents)
 
 
 ## Validator guidelines
