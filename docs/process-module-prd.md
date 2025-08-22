@@ -38,7 +38,6 @@ The Process Module encompasses:
 
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
-| `id` | ID | Primary Key | Unique identifier |
 | `case_number` | String | Required, Unique | Legal case number |
 | `court` | String | Required | Court name/jurisdiction |
 | `area` | Enum | Required | Legal area (civil, labor, criminal, family, tax, administrative, constitutional, international) |
@@ -56,7 +55,6 @@ The Process Module encompasses:
 - `by_court`: Index on `court` for filtering
 - `by_area`: Index on `area` for filtering
 - `by_status`: Index on `status` for filtering
-- `by_creation_time`: Index on `_creationTime` for ordering
 
 ### 2.2 API Endpoints
 
