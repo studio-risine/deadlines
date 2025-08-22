@@ -10,7 +10,11 @@
     "lint:staged": "biome check --staged --write",
     "lint:ci": "biome ci",
     "check:updates": "npm-check-updates -i --color",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest",
+    "test:once": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.30.0",
@@ -54,6 +58,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
+    "vitest": "^3.2.4",
     "zod": "^4.0.17"
   },
   "devDependencies": {

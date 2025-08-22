@@ -10,7 +10,7 @@
 
 // export const findById = query({
 // 	args: {
-// 		id: v.id('processes'),
+// 		id: v.id('deadlines'),
 // 	},
 // 	handler: async (ctx, args) => {
 // 		return await ctx.db.get(args.id)
@@ -22,18 +22,18 @@
 // 		register: v.string(),
 // 	},
 // 	handler: async (ctx, args) => {
-// 		const process = await ctx.db
-// 			.query('processes')
+// 		const deadline = await ctx.db
+// 			.query('deadlines')
 // 			// .withIndex('by_register', (query) => query.eq('register', args.register))
 // 			.first()
 
-// 		return process
+// 		return deadline
 // 	},
 // })
 
 // export const remove = mutation({
 // 	args: {
-// 		id: v.id('processes'),
+// 		id: v.id('deadlines'),
 // 	},
 // 	handler: async (ctx, args) => {
 // 		await ctx.db.delete(args.id)
