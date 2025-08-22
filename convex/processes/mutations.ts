@@ -1,43 +1,114 @@
-import { v } from "convex/values"
-import { mutation } from "../_generated/server"
-import { ResourceAlreadyExistsError } from "@/errors/resource-already-exists-error"
+import { ResourceAlreadyExistsError } from '@/errors/resource-already-exists-error'
+import { v } from 'convex/values'
+import { mutation } from '../_generated/server'
 
-export const create = mutation({
+export const createProcess = mutation({
 	args: {
-		register: v.string(),
-		client: v.string(),
-		opposingParty: v.optional(v.string()),
-		status: v.optional(
-			v.union(
-				v.literal('active'),
-				v.literal('undefined'),
-				v.literal('dismissed'),
-				v.literal('closed'),
-				v.literal('suspended'),
-				v.literal('archived')
+		case_number: v.string(),
+		court: v.string(),
+		area: v.union(
+			v.literal('civil'),
+			v.literal('labor'),
+			v.literal('criminal'),
+			v.literal('family'),
+			v.literal('tax'),
+			v.literal('administrative'),
+			v.literal('constitutional'),
+			v.literal('international'),
+		),
+		parties: v.object({
+			plaintiff: v.object({
+				name: v.string(),
+				type: v.union(
+					v.literal('individual'),
+					v.literal('company'),
+					v.literal('government'),
+				),
+				document: v.optional(v.string()),
+			}),
+			defendant: v.object({
+				name: v.string(),
+				type: v.union(
+					v.literal('individual'),
+					v.literal('company'),
+					v.literal('government'),
+				),
+				document: v.optional(v.string()),
+			}),
+			lawyers: v.optional(
+				v.object({
+					plaintiff: v.optional(v.array(v.string())),
+					defendant: v.optional(v.array(v.string())),
+				}),
 			),
+		}),
+		status: v.union(
+			v.literal('ongoing'),
+			v.literal('suspended'),
+			v.literal('archived'),
+			v.literal('closed'),
 		),
 	},
+	returns: v.object({
+		_id: v.id('processes'),
+		_creationTime: v.number(),
+		case_number: v.string(),
+		court: v.string(),
+		area: v.string(),
+		parties: v.object({
+			plaintiff: v.object({
+				name: v.string(),
+				type: v.union(
+					v.literal('individual'),
+					v.literal('company'),
+					v.literal('government'),
+				),
+				document: v.optional(v.string()),
+			}),
+			defendant: v.object({
+				name: v.string(),
+				type: v.union(
+					v.literal('individual'),
+					v.literal('company'),
+					v.literal('government'),
+				),
+				document: v.optional(v.string()),
+			}),
+			lawyers: v.optional(
+				v.object({
+					plaintiff: v.optional(v.array(v.string())),
+					defendant: v.optional(v.array(v.string())),
+				}),
+			),
+		}),
+		status: v.string(),
+	}),
 	handler: async (ctx, args) => {
-		const processAlreadyExists = await ctx.db
+		const caseNumberAlreadyExists = await ctx.db
 			.query('processes')
-			.withIndex('by_register', (query) => query.eq('register', args.register))
+			.withIndex('by_case_number', (query) =>
+				query.eq('case_number', args.case_number),
+			)
 			.first()
 
-		if (processAlreadyExists) {
+		if (caseNumberAlreadyExists) {
 			throw new ResourceAlreadyExistsError()
 		}
 
-		return await ctx.db.insert('processes', {
-			register: args.register,
-			// client: args.client,
-			opposingParty: args.opposingParty ?? null,
-			status: args.status ?? null,
+		const id = await ctx.db.insert('processes', {
+			case_number: args.case_number,
+			court: args.court,
+			area: args.area,
+			parties: args.parties,
+			status: args.status,
 		})
+		const process = await ctx.db.get(id)
+		if (!process) throw new Error('Created process not found')
+		return process
 	},
 })
 
-export const remove = mutation({
+export const deleteProcess = mutation({
 	args: {
 		id: v.id('processes'),
 	},
@@ -46,44 +117,61 @@ export const remove = mutation({
 	},
 })
 
-export const update = mutation({
+export const updateProcess = mutation({
 	args: {
 		id: v.id('processes'),
-		client: v.optional(v.string()),
-		opposingParty: v.optional(v.string()),
+		court: v.optional(v.string()),
+		area: v.optional(
+			v.union(
+				v.literal('civil'),
+				v.literal('labor'),
+				v.literal('criminal'),
+				v.literal('family'),
+				v.literal('tax'),
+				v.literal('administrative'),
+				v.literal('constitutional'),
+				v.literal('international'),
+			),
+		),
+		parties: v.optional(
+			v.object({
+				plaintiff: v.object({
+					name: v.string(),
+					type: v.union(
+						v.literal('individual'),
+						v.literal('company'),
+						v.literal('government'),
+					),
+					document: v.optional(v.string()),
+				}),
+				defendant: v.object({
+					name: v.string(),
+					type: v.union(
+						v.literal('individual'),
+						v.literal('company'),
+						v.literal('government'),
+					),
+					document: v.optional(v.string()),
+				}),
+				lawyers: v.optional(
+					v.object({
+						plaintiff: v.optional(v.array(v.string())),
+						defendant: v.optional(v.array(v.string())),
+					}),
+				),
+			}),
+		),
 		status: v.optional(
 			v.union(
-				v.literal('active'),
-				v.literal('undefined'),
-				v.literal('dismissed'),
-				v.literal('closed'),
+				v.literal('ongoing'),
 				v.literal('suspended'),
-				v.literal('archived')
+				v.literal('archived'),
+				v.literal('closed'),
 			),
 		),
 	},
 	handler: async (ctx, args) => {
 		const { id, ...updates } = args
-
-		const processUpdates: Partial<{
-			client: string
-			opposingParty: string | null
-			status: 'active' | 'undefined' | 'dismissed' | 'closed' | 'suspended' | 'archived' | null
-		}> = {}
-
-		if (updates.client !== undefined) {
-			processUpdates.client = updates.client
-		}
-
-		if (updates.opposingParty !== undefined) {
-			processUpdates.opposingParty = updates.opposingParty ?? null
-		}
-
-		if (updates.status !== undefined) {
-			processUpdates.status = updates.status ?? null
-		}
-
-		return await ctx.db.patch(id, processUpdates)
+		return await ctx.db.patch(id, updates)
 	},
 })
-
