@@ -22,32 +22,50 @@ import {
 } from '@/components/ui/select'
 import { PROCESS_STATUS } from '@/constants/process'
 import { useCreateProcess } from '@/hooks/process/use-create-process'
-import { type ProcessFormValues, processFormSchema } from '@/types/process'
+import z from 'zod'
 
 interface AddProcessFormProps {
 	onSuccess?: () => void
 }
 
+export const processTypeSchema = z.enum([
+	'active',
+	'undefined',
+	'dismissed',
+	'closed',
+	'suspended',
+	'archived',
+])
+
+export const processSchema = z.object({
+	register: z.string(),
+	// client: z.string(),
+	// adverse: z.string().nullable(),
+	// status: processTypeSchema.nullable(),
+})
+
+export type ProcessDataForm = z.infer<typeof processSchema>
+
 export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 	const { createProcessAsync, isPending } = useCreateProcess()
 
-	const form = useForm<ProcessFormValues>({
-		resolver: zodResolver(processFormSchema),
+	const form = useForm<ProcessDataForm>({
+		resolver: zodResolver(processSchema),
 		defaultValues: {
-			register: '',
-			client: '',
-			opposingParty: '',
-			status: 'active',
+			// register: '',
+			// client: '',
+			// adverse: '',
+			// status: 'active',
 		},
 	})
 
-	async function onSubmit(values: ProcessFormValues) {
+	async function onSubmit(DataForm: ProcessDataForm) {
 		try {
 			await createProcessAsync({
-				register: values.register,
-				client: values.client,
-				opposingParty: values.opposingParty || undefined,
-				status: values.status,
+				register: DataForm.register,
+				// client: DataForm.client,
+				// adverse: DataForm.adverse || undefined,
+				// status: DataForm.status || undefined,
 			})
 
 			form.reset()
@@ -74,7 +92,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 					)}
 				/>
 
-				<FormField
+				{/* <FormField
 					control={form.control}
 					name="client"
 					render={({ field }) => (
@@ -90,14 +108,15 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 
 				<FormField
 					control={form.control}
-					name="opposingParty"
+					name="adverse"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Parte Contrária</FormLabel>
+							<FormLabel>Parte Adversa</FormLabel>
 							<FormControl>
 								<Input
-									placeholder="Nome da parte contrária (opcional)"
+									placeholder="Nome da parte adversa"
 									{...field}
+									value={field.value ?? ''}
 								/>
 							</FormControl>
 							<FormMessage />
@@ -128,7 +147,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 							<FormMessage />
 						</FormItem>
 					)}
-				/>
+				/> */}
 
 				<div className="flex justify-end space-x-2">
 					<Button type="button" variant="outline" onClick={() => form.reset()}>

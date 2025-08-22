@@ -13,10 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as deadlines_create from "../deadlines/create.js";
-import type * as deadlines_findById from "../deadlines/findById.js";
-import type * as deadlines from "../deadlines.js";
-import type * as processes from "../processes.js";
+import type * as processes_mutations from "../processes/mutations.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -27,10 +24,7 @@ import type * as processes from "../processes.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "deadlines/create": typeof deadlines_create;
-  "deadlines/findById": typeof deadlines_findById;
-  deadlines: typeof deadlines;
-  processes: typeof processes;
+  "processes/mutations": typeof processes_mutations;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

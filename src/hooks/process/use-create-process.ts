@@ -1,23 +1,23 @@
 'use client'
 
+import type { ProcessType } from '@/modules/process/components/add-process-form'
 import { useConvexMutation } from '@convex-dev/react-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api } from '../../../convex/_generated/api'
-import type { ProcessType } from '@/types/process'
 
 type CreateProcessArgs = {
 	register: string
-	client: string
-	opposingParty?: string
-	status?: ProcessType
+	// client: string
+	// adverse?: string
+	// status?: ProcessType
 }
 
 export function useCreateProcess() {
 	const queryClient = useQueryClient()
 
 	const mutation = useMutation({
-		mutationFn: useConvexMutation(api.processes.create),
+		mutationFn: useConvexMutation(api.processes.mutations.create),
 
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['processes'] })

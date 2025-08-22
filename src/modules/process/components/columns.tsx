@@ -11,7 +11,6 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { PROCESS_STATUS } from '@/constants/process'
-import type { Process } from '@/types/process'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { useState } from 'react'
@@ -22,17 +21,7 @@ import { ViewProcessDialog } from './view-process-dialog'
 export const columns: ColumnDef<Process>[] = [
 	{
 		accessorKey: 'register',
-		header: ({ column }) => {
-			return (
-				<Button
-					variant="ghost"
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-				>
-					Número do Processo
-					<ArrowUpDown className="ml-2 h-4 w-4" />
-				</Button>
-			)
-		},
+		header: 'Número do Processo',
 		cell: ({ row }) => (
 			<div className="font-medium">{row.getValue('register')}</div>
 		),
@@ -49,14 +38,14 @@ export const columns: ColumnDef<Process>[] = [
 		),
 	},
 	{
-		accessorKey: 'opposingParty',
-		header: 'Parte Contrária',
+		accessorKey: 'adverse',
+		header: 'Parte Adversa',
 		cell: ({ row }) => {
-			const opposingParty = row.getValue('opposingParty') as string | null
+			const adverse = row.getValue('adverse') as string | null
 			return (
 				<div className="max-w-sm">
 					<p className="w-full truncate text-muted-foreground text-sm">
-						{opposingParty || 'Não informado'}
+						{adverse || 'Não informado'}
 					</p>
 				</div>
 			)
@@ -96,7 +85,7 @@ export const columns: ColumnDef<Process>[] = [
 			}
 
 			const getStatusLabel = (status: string | null) => {
-				const statusObj = PROCESS_STATUS.find(s => s.value === status)
+				const statusObj = PROCESS_STATUS.find((s) => s.value === status)
 				return statusObj?.label ?? 'Sem status'
 			}
 

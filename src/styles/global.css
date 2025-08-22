@@ -85,7 +85,7 @@
 	--card-foreground: var(--color-zinc-300);
 	--popover: var(--color-zinc-800);
 	--popover-foreground: var(--color-zinc-300);
-	--primary: var(--color-zinc-100);
+	--primary: #f9ddae;
 	--primary-foreground: var(--color-zinc-800);
 	--secondary: oklch(0.269 0 0);
 	--secondary-foreground: var(--color-zinc-300);

@@ -30,7 +30,7 @@ export function DataTable<TData, TValue>({
 	const columnLabels: ColumnLabelConfig = {
 		register: 'Número do Processo',
 		client: 'Cliente',
-		opposingParty: 'Parte Contrária',
+		adverse: 'Parte Adversa',
 		status: 'Status',
 		_creationTime: 'Data de Criação',
 	}

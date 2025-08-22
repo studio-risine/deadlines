@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({
 	return (
 		<DataTableWrapper
 			columns={columns}
-			data={deadlines ?? []}
+			data={(deadlines ?? []) as unknown as TData[]}
 			searchColumn="header"
 			searchPlaceholder="Filtrar por processo ou descrição..."
 			filters={filters}
