@@ -82,10 +82,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 						<FormItem>
 							<FormLabel>Número do Processo *</FormLabel>
 							<FormControl>
-								<Input 
-									placeholder="Ex: 1234567-89.2024.8.26.0001" 
-									{...field} 
-								/>
+								<Input placeholder="Ex: 1234567-89.2024.8.26.0001" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -99,10 +96,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 						<FormItem>
 							<FormLabel>Cliente *</FormLabel>
 							<FormControl>
-								<Input 
-									placeholder="Nome do cliente" 
-									{...field} 
-								/>
+								<Input placeholder="Nome do cliente" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -116,9 +110,9 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 						<FormItem>
 							<FormLabel>Parte Contrária</FormLabel>
 							<FormControl>
-								<Input 
-									placeholder="Nome da parte contrária (opcional)" 
-									{...field} 
+								<Input
+									placeholder="Nome da parte contrária (opcional)"
+									{...field}
 								/>
 							</FormControl>
 							<FormMessage />
@@ -150,11 +144,7 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 				/>
 
 				<div className="flex justify-end space-x-2">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => form.reset()}
-					>
+					<Button type="button" variant="outline" onClick={() => form.reset()}>
 						Cancelar
 					</Button>
 					<Button type="submit" disabled={form.formState.isSubmitting}>

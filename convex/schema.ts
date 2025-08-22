@@ -17,7 +17,12 @@ export default defineSchema({
 			v.literal('pending'),
 			v.null(),
 		),
-	}).index('by_register', ['register']),
+		deleted: v.optional(v.boolean()),
+		deletedAt: v.optional(v.number()),
+		deletedBy: v.optional(v.string()),
+	})
+		.index('by_register', ['register'])
+		.index('by_deleted', ['deleted']),
 
 	deadlines: defineTable({
 		title: v.string(),
