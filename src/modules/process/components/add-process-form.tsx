@@ -1,33 +1,15 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
+import { Form } from '@/components/ui/form'
 import { Stepper } from '@/components/ui/stepper'
-import { PARTY_TYPES, PROCESS_AREAS, PROCESS_STATUS } from '@/constants/process'
+import { PROCESS_AREAS, PROCESS_STATUS } from '@/constants/process'
 import {
 	type InsertProcessInput,
-	useCreateProcess,
 	useInsertProcess,
 } from '@/hooks/process/use-insert-process'
 import type {
@@ -37,30 +19,14 @@ import type {
 } from '@/types'
 import { convertCommaSeparatedToArray } from '@/utils/convert/convert-comma-separeted-to-array'
 
+import { BasicInfoStep } from './form-steps/basic-info-step'
+import { DefendantStep } from './form-steps/defendant-step'
+import { type ProcessFormData, processSchema } from './form-steps/form-types'
+import { PlaintiffStep } from './form-steps/plaintiff-step'
+
 interface AddProcessFormProps {
 	onSuccess?: () => void
 }
-
-const processSchema = z.object({
-	case_number: z.string().min(1, 'Número do processo é obrigatório'),
-	court: z.string().min(1, 'Tribunal é obrigatório'),
-	area: z.enum(PROCESS_AREAS.map((area) => area.value)),
-	status: z.enum(PROCESS_STATUS.map((status) => status.value)),
-
-	defendant: z.object({
-		name: z.string().min(1, 'Nome do requerente é obrigatório'),
-		type: z.enum(['individual', 'company', 'government']),
-		document: z.string().optional(),
-		lawyers: z.string().optional(),
-	}),
-
-	plaintiff: z.object({
-		name: z.string().min(1, 'Nome do requerido é obrigatório'),
-		type: z.enum(['individual', 'company', 'government']),
-		document: z.string().optional(),
-		lawyers: z.string().optional(),
-	}),
-})
 
 const basicInfoSchema = processSchema.pick({
 	case_number: true,
@@ -77,8 +43,6 @@ const plaintiffSchema = processSchema.pick({
 	plaintiff: true,
 })
 
-type ProcessFormData = z.infer<typeof processSchema>
-
 const steps = [
 	{
 		id: 'basic-info',
@@ -86,13 +50,32 @@ const steps = [
 	},
 	{
 		id: 'defendant',
-		title: 'Dados do Requerente',
+		title: 'Dados do Requerido',
 	},
 	{
 		id: 'plaintiff',
-		title: 'Dados do Requerido',
+		title: 'Dados do Requerente',
 	},
 ]
+
+const getDefaultValues = (): ProcessFormData => ({
+	case_number: '',
+	court: '',
+	area: PROCESS_AREAS[0]?.value || 'civil',
+	status: PROCESS_STATUS[0]?.value || 'active',
+	defendant: {
+		name: '',
+		type: 'individual',
+		document: '',
+		lawyers: '',
+	},
+	plaintiff: {
+		name: '',
+		type: 'individual',
+		document: '',
+		lawyers: '',
+	},
+})
 
 export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 	const [currentStep, setCurrentStep] = useState(1)
@@ -101,374 +84,171 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 
 	const form = useForm<ProcessFormData>({
 		resolver: zodResolver(processSchema),
-		defaultValues: {
-			case_number: '',
-			court: '',
-			area: 'civil',
-			status: 'active',
-			defendant: {
-				name: '',
-				type: 'individual',
-				document: '',
-				lawyers: '',
-			},
-			plaintiff: {
-				name: '',
-				type: 'individual',
-				document: '',
-				lawyers: '',
-			},
-		},
+		defaultValues: getDefaultValues(),
+		mode: 'onChange',
 	})
 
-	function handleCancelForm() {
-		form.reset()
+	const handleCancelForm = useCallback(() => {
+		form.reset(getDefaultValues())
 		setCurrentStep(1)
-	}
+	}, [form])
 
-	async function validateCurrentStep(): Promise<boolean> {
+	const getStepValidator = useCallback((step: number) => {
+		const validators = {
+			1: basicInfoSchema,
+			2: defendantSchema,
+			3: plaintiffSchema,
+		}
+		return validators[step as keyof typeof validators]
+	}, [])
+
+	const validateCurrentStep = useCallback(async (): Promise<boolean> => {
 		const formData = form.getValues()
+		const validator = getStepValidator(currentStep)
+
+		if (!validator) {
+			return false
+		}
 
 		try {
-			switch (currentStep) {
-				case 1:
-					basicInfoSchema.parse(formData)
-					return true
-				case 2:
-					defendantSchema.parse(formData)
-					return true
-				case 3:
-					plaintiffSchema.parse(formData)
-					return true
-				default:
-					return false
-			}
+			validator.parse(formData)
+			return true
 		} catch (error) {
 			await form.trigger()
 			return false
 		}
-	}
+	}, [currentStep, form, getStepValidator])
 
-	async function handleNext() {
+	const handleNext = useCallback(async () => {
 		const isValid = await validateCurrentStep()
 
-		if (isValid && currentStep < steps.length) {
-			setCurrentStep(currentStep + 1)
+		if (!isValid) {
+			return
 		}
-	}
 
-	function handlePrevious() {
-		if (currentStep > 1) {
-			setCurrentStep(currentStep - 1)
+		if (currentStep >= steps.length) {
+			return
 		}
-	}
 
-	async function onSubmit(data: ProcessFormData) {
-		try {
-			const processData: InsertProcessInput = {
-				case_number: data.case_number,
-				court: data.court,
-				area: data.area as ProcessAreaType,
-				status: data.status as ProcessStatusType,
+		setCurrentStep((prev) => prev + 1)
+	}, [currentStep, validateCurrentStep])
 
-				parties: {
-					defendant: {
-						name: data.defendant.name,
-						type: data.defendant.type as ProcessPartyType,
-						document: data.defendant.document || undefined,
+	const handlePrevious = useCallback(() => {
+		if (currentStep <= 1) {
+			return
+		}
+
+		setCurrentStep((prev) => prev - 1)
+	}, [currentStep])
+
+	const onSubmit = useCallback(
+		async (data: ProcessFormData) => {
+			try {
+				const isFormValid = await form.trigger()
+
+				if (!isFormValid) {
+					return
+				}
+
+				const processData: InsertProcessInput = {
+					case_number: data.case_number,
+					court: data.court,
+					area: data.area as ProcessAreaType,
+					status: data.status as ProcessStatusType,
+
+					parties: {
+						defendant: {
+							name: data.defendant.name,
+							type: data.defendant.type as ProcessPartyType,
+							document: data.defendant.document || undefined,
+						},
+						plaintiff: {
+							name: data.plaintiff.name,
+							type: data.plaintiff.type as ProcessPartyType,
+							document: data.plaintiff.document || undefined,
+						},
+						lawyers: {
+							defendant: convertCommaSeparatedToArray(data.defendant.lawyers),
+							plaintiff: convertCommaSeparatedToArray(data.plaintiff.lawyers),
+						},
 					},
-					plaintiff: {
-						name: data.plaintiff.name,
-						type: data.plaintiff.type as ProcessPartyType,
-						document: data.plaintiff.document || undefined,
-					},
-					lawyers: {
-						defendant: convertCommaSeparatedToArray(data.defendant.lawyers),
-						plaintiff: convertCommaSeparatedToArray(data.plaintiff.lawyers),
-					},
-				},
+				}
+
+				await insertProcessAsync(processData)
+
+				form.reset(getDefaultValues())
+				setCurrentStep(1)
+				onSuccess?.()
+			} catch (error) {
+				console.error('Erro ao criar processo:', error)
 			}
+		},
+		[form, insertProcessAsync, onSuccess],
+	)
 
-			await insertProcessAsync(processData)
+	const renderBasicInfoStep = useCallback(
+		() => <BasicInfoStep control={form.control} />,
+		[form.control],
+	)
 
-			form.reset()
-			setCurrentStep(1)
-			onSuccess?.()
-		} catch (error) {
-			console.error('Erro ao criar processo:', error)
+	const renderDefendantStep = useCallback(
+		() => <DefendantStep control={form.control} />,
+		[form.control],
+	)
+
+	const renderPlaintiffStep = useCallback(
+		() => <PlaintiffStep control={form.control} />,
+		[form.control],
+	)
+
+	const renderStepContent = useCallback(() => {
+		const stepRenderers = {
+			1: renderBasicInfoStep,
+			2: renderDefendantStep,
+			3: renderPlaintiffStep,
 		}
-	}
 
-	function renderStepContent() {
-		switch (currentStep) {
-			case 1:
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Informações Básicas</CardTitle>
-						</CardHeader>
-						<CardContent className="space-y-4">
-							<FormField
-								control={form.control}
-								name="case_number"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Número do Processo *</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Ex: 1234567-89.2024.8.26.0001"
-												{...field}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
+		const renderer = stepRenderers[currentStep as keyof typeof stepRenderers]
+		return renderer ? renderer() : null
+	}, [
+		currentStep,
+		renderBasicInfoStep,
+		renderDefendantStep,
+		renderPlaintiffStep,
+	])
 
-							<FormField
-								control={form.control}
-								name="court"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Tribunal *</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Ex: 1ª Vara Cível de São Paulo"
-												{...field}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<div className="grid grid-cols-2 gap-4">
-								<FormField
-									control={form.control}
-									name="area"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Área *</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Selecione a área" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{PROCESS_AREAS.map((area) => (
-														<SelectItem key={area.value} value={area.value}>
-															{area.label}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="status"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Status *</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Selecione o status" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{PROCESS_STATUS.map((status) => (
-														<SelectItem key={status.value} value={status.value}>
-															{status.label}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</CardContent>
-					</Card>
-				)
-
-			case 2:
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Dados do Requerido</CardTitle>
-						</CardHeader>
-						<CardContent className="space-y-4">
-							<FormField
-								control={form.control}
-								name="defendant.name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Nome *</FormLabel>
-										<FormControl>
-											<Input placeholder="Nome do requerido" {...field} />
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<div className="grid grid-cols-2 gap-4">
-								<FormField
-									control={form.control}
-									name="defendant.type"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Tipo *</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Tipo de pessoa" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{PARTY_TYPES.map((type) => (
-														<SelectItem key={type.value} value={type.value}>
-															{type.label}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="defendant.document"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Documento</FormLabel>
-											<FormControl>
-												<Input placeholder="CPF/CNPJ" {...field} />
-											</FormControl>
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<FormField
-								control={form.control}
-								name="defendant.lawyers"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Advogados</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Nomes separados por vírgula"
-												{...field}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-						</CardContent>
-					</Card>
-				)
-
-			case 3:
-				return (
-					<Card>
-						<CardHeader>
-							<CardTitle>Dados do Requerente</CardTitle>
-						</CardHeader>
-						<CardContent className="space-y-4">
-							<FormField
-								control={form.control}
-								name="plaintiff.name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Nome *</FormLabel>
-										<FormControl>
-											<Input placeholder="Nome do requerente" {...field} />
-										</FormControl>
-									</FormItem>
-								)}
-							/>
-
-							<div className="grid grid-cols-2 gap-4">
-								<FormField
-									control={form.control}
-									name="plaintiff.type"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Tipo *</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue placeholder="Tipo de pessoa" />
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													{PARTY_TYPES.map((type) => (
-														<SelectItem key={type.value} value={type.value}>
-															{type.label}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormItem>
-									)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="plaintiff.document"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Documento</FormLabel>
-											<FormControl>
-												<Input placeholder="CPF/CNPJ" {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-
-							<FormField
-								control={form.control}
-								name="plaintiff.lawyers"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Advogados</FormLabel>
-										<FormControl>
-											<Input
-												placeholder="Nomes separados por vírgula"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</CardContent>
-					</Card>
-				)
-
-			default:
-				return null
+	const renderPreviousButton = useCallback(() => {
+		if (currentStep <= 1) {
+			return null
 		}
-	}
+
+		return (
+			<Button
+				type="button"
+				variant="outline"
+				onClick={handlePrevious}
+				disabled={isPending}
+			>
+				Anterior
+			</Button>
+		)
+	}, [currentStep, handlePrevious, isPending])
+
+	const renderActionButton = useCallback(() => {
+		if (currentStep < steps.length) {
+			return (
+				<Button type="button" onClick={handleNext} disabled={isPending}>
+					Próximo
+				</Button>
+			)
+		}
+
+		return (
+			<Button type="submit" disabled={isPending}>
+				{isPending ? 'Salvando...' : 'Salvar'}
+			</Button>
+		)
+	}, [currentStep, handleNext, isPending])
 
 	return (
 		<div className="space-y-6">
@@ -479,36 +259,19 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 					{renderStepContent()}
 
 					<div className="flex justify-between">
-						<div>
-							{currentStep > 1 && (
-								<Button
-									type="button"
-									variant="outline"
-									onClick={handlePrevious}
-								>
-									Anterior
-								</Button>
-							)}
-						</div>
+						<div>{renderPreviousButton()}</div>
 
 						<div className="flex space-x-2">
 							<Button
 								type="button"
 								variant="outline"
 								onClick={handleCancelForm}
+								disabled={isPending}
 							>
 								Cancelar
 							</Button>
 
-							{currentStep < steps.length ? (
-								<Button type="button" onClick={handleNext}>
-									Próximo
-								</Button>
-							) : (
-								<Button type="submit" disabled={isPending}>
-									{isPending ? 'Salvando...' : 'Salvar'}
-								</Button>
-							)}
+							{renderActionButton()}
 						</div>
 					</div>
 				</form>
