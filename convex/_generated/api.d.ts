@@ -13,12 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as processes_deleteProcess from "../processes/deleteProcess.js";
-import type * as processes_findProcessByCaseNumber from "../processes/findProcessByCaseNumber.js";
-import type * as processes_findProcessById from "../processes/findProcessById.js";
-import type * as processes_insertProcess from "../processes/insertProcess.js";
-import type * as processes_listProcesses from "../processes/listProcesses.js";
-import type * as processes_updateProcess from "../processes/updateProcess.js";
+import type * as processes from "../processes.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -29,12 +24,7 @@ import type * as processes_updateProcess from "../processes/updateProcess.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "processes/deleteProcess": typeof processes_deleteProcess;
-  "processes/findProcessByCaseNumber": typeof processes_findProcessByCaseNumber;
-  "processes/findProcessById": typeof processes_findProcessById;
-  "processes/insertProcess": typeof processes_insertProcess;
-  "processes/listProcesses": typeof processes_listProcesses;
-  "processes/updateProcess": typeof processes_updateProcess;
+  processes: typeof processes;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

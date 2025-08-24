@@ -35,13 +35,11 @@ export interface InsertProcessInput
 	status: ProcessStatusType
 }
 
-export function useCreateProcess() {
+export function useInsertProcess() {
 	const queryClient = useQueryClient()
-
-	const convexMutation = useConvexMutation(api.processes.insertProcess)
-
+	
 	const mutation = useMutation({
-		mutationFn: convexMutation,
+		mutationFn: useConvexMutation(api.processes.insertProcess),
 		mutationKey: ['processes'],
 
 		onSuccess: () => {
@@ -54,17 +52,17 @@ export function useCreateProcess() {
 		},
 	})
 
-	const createProcess = (args: InsertProcessInput) => {
+	const insertProcess = (args: InsertProcessInput) => {
 		return mutation.mutate(args)
 	}
 
-	const createProcessAsync = async (args: InsertProcessInput) => {
+	const insertProcessAsync = async (args: InsertProcessInput) => {
 		return mutation.mutateAsync(args)
 	}
 
 	return {
-		createProcess,
-		createProcessAsync,
+		insertProcess,
+		insertProcessAsync,
 		isPending: mutation.isPending,
 		isSuccess: mutation.isSuccess,
 		isError: mutation.isError,

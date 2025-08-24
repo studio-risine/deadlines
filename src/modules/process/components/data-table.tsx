@@ -17,7 +17,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
 	columns,
 }: DataTableProps<TData, TValue>) {
-	const { processes } = useQueryProcesses()
+	// const { processes } = useQueryProcesses()
 
 	const filters: FilterConfig[] = [
 		{
@@ -38,7 +38,7 @@ export function DataTable<TData, TValue>({
 	return (
 		<DataTableWrapper
 			columns={columns}
-			data={(processes ?? []) as TData[]}
+			data={([]) as TData[]}
 			searchColumn="register"
 			searchPlaceholder="Filtrar por número do processo ou cliente..."
 			filters={filters}
