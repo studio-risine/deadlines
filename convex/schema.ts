@@ -27,7 +27,7 @@ export default defineSchema({
 			v.literal('international'),
 		),
 		parties: v.object({
-			plaintiff: v.object({
+			defendant: v.object({
 				name: v.string(),
 				type: v.union(
 					v.literal('individual'),
@@ -36,7 +36,7 @@ export default defineSchema({
 				),
 				document: v.optional(v.string()),
 			}),
-			defendant: v.object({
+			plaintiff: v.object({
 				name: v.string(),
 				type: v.union(
 					v.literal('individual'),
@@ -47,8 +47,8 @@ export default defineSchema({
 			}),
 			lawyers: v.optional(
 				v.object({
-					plaintiff: v.optional(v.array(v.string())),
 					defendant: v.optional(v.array(v.string())),
+					plaintiff: v.optional(v.array(v.string())),
 				}),
 			),
 		}),
