@@ -43,10 +43,12 @@ export const insertProcess = mutation({
 			),
 		}),
 		status: v.union(
-			v.literal('ongoing'),
+			v.literal('active'),
+			v.literal('undefined'),
+			v.literal('dismissed'),
+			v.literal('closed'),
 			v.literal('suspended'),
 			v.literal('archived'),
-			v.literal('closed'),
 		),
 	},
 	returns: v.object({
