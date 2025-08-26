@@ -14,11 +14,11 @@ import { PROCESS_STATUS } from '@/constants/process'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { useState } from 'react'
-import type { DataTableOutput } from './data-table'
+import type { IDataTableOutput } from './data-table'
 // import { DeleteProcessDialog } from './delete-process-dialog'
 // import { EditProcessDialog } from './edit-process-dialog'
 
-export const columns: ColumnDef<DataTableOutput>[] = [
+export const columns: ColumnDef<IDataTableOutput>[] = [
 	{
 		accessorKey: 'caseNumber',
 		header: 'Número do Processo',
