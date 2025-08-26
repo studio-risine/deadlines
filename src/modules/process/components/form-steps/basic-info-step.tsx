@@ -20,14 +20,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { PROCESS_AREAS, PROCESS_STATUS } from '@/constants/process'
 import {
-	JUDICIAL_SEGMENTS,
-	STATE_COURT_CODES,
-	FEDERAL_COURT_CODES,
-	LABOR_COURT_CODES,
 	ELECTORAL_COURT_CODES,
-} from '@/constants/cnj-mappings'
+	JUDICIAL_SEGMENTS,
+	LABOR_COURT_CODES,
+	STATE_COURT_CODES,
+} from '@/constants'
+import { PROCESS_AREAS, PROCESS_STATUS } from '@/constants/process'
 import type { FormStepProps } from './form-types'
 
 export function BasicInfoStep({ control }: FormStepProps) {
@@ -63,7 +62,7 @@ export function BasicInfoStep({ control }: FormStepProps) {
 							<FormLabel>Tribunal *</FormLabel>
 							<Select onValueChange={field.onChange} value={field.value}>
 								<FormControl>
-									<SelectTrigger className='w-full'>
+									<SelectTrigger className="w-full">
 										<SelectValue placeholder="Selecione o tribunal" />
 									</SelectTrigger>
 								</FormControl>
@@ -82,19 +81,25 @@ export function BasicInfoStep({ control }: FormStepProps) {
 
 									<SelectGroup>
 										<SelectLabel>{JUDICIAL_SEGMENTS['6']}</SelectLabel>
-										{Object.entries(ELECTORAL_COURT_CODES).map(([code, name]) => (
-											<SelectItem key={`electoral-${code}`} value={`electoral-${code}`}>
-												{name}
-											</SelectItem>
-										))}
+										{Object.entries(ELECTORAL_COURT_CODES).map(
+											([code, name]) => (
+												<SelectItem
+													key={`electoral-${code}`}
+													value={`electoral-${code}`}
+												>
+													{name}
+												</SelectItem>
+											),
+										)}
 									</SelectGroup>
 
 									<SelectGroup>
 										<SelectLabel>{JUDICIAL_SEGMENTS['7']}</SelectLabel>
-										<SelectItem value="military-union">{JUDICIAL_SEGMENTS['7']}</SelectItem>
+										<SelectItem value="military-union">
+											{JUDICIAL_SEGMENTS['7']}
+										</SelectItem>
 									</SelectGroup>
 
-									{/* Justiça dos Estados e do DF */}
 									<SelectGroup>
 										<SelectLabel>{JUDICIAL_SEGMENTS['8']}</SelectLabel>
 										{Object.entries(STATE_COURT_CODES).map(([code, name]) => (
@@ -106,7 +111,9 @@ export function BasicInfoStep({ control }: FormStepProps) {
 
 									<SelectGroup>
 										<SelectLabel>{JUDICIAL_SEGMENTS['9']}</SelectLabel>
-										<SelectItem value="military-state">{JUDICIAL_SEGMENTS['9']}</SelectItem>
+										<SelectItem value="military-state">
+											{JUDICIAL_SEGMENTS['9']}
+										</SelectItem>
 									</SelectGroup>
 
 									<SelectScrollDownButton />
@@ -126,7 +133,7 @@ export function BasicInfoStep({ control }: FormStepProps) {
 								<FormLabel>Área *</FormLabel>
 								<Select onValueChange={field.onChange} value={field.value}>
 									<FormControl>
-										<SelectTrigger className='w-full'>
+										<SelectTrigger className="w-full">
 											<SelectValue placeholder="Selecione a área" />
 										</SelectTrigger>
 									</FormControl>
@@ -151,7 +158,7 @@ export function BasicInfoStep({ control }: FormStepProps) {
 								<FormLabel>Status *</FormLabel>
 								<Select onValueChange={field.onChange} value={field.value}>
 									<FormControl>
-										<SelectTrigger className='w-full'>
+										<SelectTrigger className="w-full">
 											<SelectValue placeholder="Selecione o status" />
 										</SelectTrigger>
 									</FormControl>
