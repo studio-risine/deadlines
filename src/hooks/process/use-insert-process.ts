@@ -14,7 +14,7 @@ import type { Doc } from '../../../convex/_generated/dataModel'
 export interface InsertProcessInput
 	extends Omit<Doc<'processes'>, '_id' | '_creationTime'> {
 	case_number: string
-	court: string
+	tribunal_name: string
 	area: ProcessAreaType
 	parties: {
 		defendant: {
@@ -32,7 +32,7 @@ export interface InsertProcessInput
 			plaintiff?: string[] | undefined
 		}
 	}
-	status: ProcessStatusType
+	status: ProcessStatusType	
 }
 
 export function useInsertProcess() {

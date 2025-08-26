@@ -30,7 +30,7 @@ interface AddProcessFormProps {
 
 const basicInfoSchema = processSchema.pick({
 	case_number: true,
-	court: true,
+	tribunal_name: true,
 	area: true,
 	status: true,
 })
@@ -60,7 +60,7 @@ const steps = [
 
 const getDefaultValues = (): ProcessFormData => ({
 	case_number: '',
-	court: '',
+	tribunal_name: '',
 	area: PROCESS_AREAS[0]?.value || 'civil',
 	status: PROCESS_STATUS[0]?.value || 'active',
 	defendant: {
@@ -152,10 +152,10 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 
 				const processData: InsertProcessInput = {
 					case_number: data.case_number,
-					court: data.court,
+					tribunal_name: data.tribunal_name,
 					area: data.area as ProcessAreaType,
 					status: data.status as ProcessStatusType,
-
+					
 					parties: {
 						defendant: {
 							name: data.defendant.name,

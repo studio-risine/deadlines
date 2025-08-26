@@ -15,17 +15,8 @@ export default defineSchema({
 
 	processes: defineTable({
 		case_number: v.string(),
-		court: v.string(),
-		area: v.union(
-			v.literal('civil'),
-			v.literal('labor'),
-			v.literal('criminal'),
-			v.literal('family'),
-			v.literal('tax'),
-			v.literal('administrative'),
-			v.literal('constitutional'),
-			v.literal('international'),
-		),
+		tribunal_name: v.optional(v.string()),
+		area: v.string(),
 		parties: v.object({
 			defendant: v.object({
 				name: v.string(),
@@ -52,32 +43,9 @@ export default defineSchema({
 				}),
 			),
 		}),
-		status: v.union(
-			v.literal('active'),
-			v.literal('undefined'),
-			v.literal('dismissed'),
-			v.literal('closed'),
-			v.literal('suspended'),
-			v.literal('archived'),
-		),
-		_creationTime: v.number(),
-		_id: v.id('processes'),
+		status: v.string(),
 	})
 		.index('by_case_number', ['case_number'])
-		.index('by_court', ['court'])
 		.index('by_area', ['area'])
-		.index('by_status', ['status']),
-
-	// deadlines: defineTable({
-	// 	title: v.string(),
-	// 	type: v.string(),
-	// 	priorityLevel: v.string(),
-	// 	assignedTo: v.optional(v.string()),
-	// 	// infos: v.optional(v.string()),
-	// 	processId: v.optional(v.id('processes')),
-	// })
-	// 	.index('processId', ['processId'])
-	// 	.index('assignedTo', ['assignedTo'])
-	// 	.index('type', ['type'])
-	// 	.index('priorityLevel', ['priorityLevel']),
+		.index('by_status', ['status'])
 })
