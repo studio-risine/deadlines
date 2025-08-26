@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { api } from '../../../convex/_generated/api'
 import type { Doc } from '../../../convex/_generated/dataModel'
 
-export interface InsertProcessInput
+export interface ProcessInput
 	extends Omit<Doc<'processes'>, '_id' | '_creationTime'> {
 	case_number: string
 	tribunal_name: string
@@ -32,12 +32,12 @@ export interface InsertProcessInput
 			plaintiff?: string[] | undefined
 		}
 	}
-	status: ProcessStatusType	
+	status: ProcessStatusType
 }
 
 export function useInsertProcess() {
 	const queryClient = useQueryClient()
-	
+
 	const mutation = useMutation({
 		mutationFn: useConvexMutation(api.processes.insertProcess),
 		mutationKey: ['processes'],
@@ -52,11 +52,11 @@ export function useInsertProcess() {
 		},
 	})
 
-	const insertProcess = (args: InsertProcessInput) => {
+	const insertProcess = (args: ProcessInput) => {
 		return mutation.mutate(args)
 	}
 
-	const insertProcessAsync = async (args: InsertProcessInput) => {
+	const insertProcessAsync = async (args: ProcessInput) => {
 		return mutation.mutateAsync(args)
 	}
 

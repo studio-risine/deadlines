@@ -9,7 +9,7 @@ import { Form } from '@/components/ui/form'
 import { Stepper } from '@/components/ui/stepper'
 import { PROCESS_AREAS, PROCESS_STATUS } from '@/constants/process'
 import {
-	type InsertProcessInput,
+	type ProcessInput,
 	useInsertProcess,
 } from '@/hooks/process/use-insert-process'
 import type {
@@ -150,12 +150,12 @@ export function AddProcessForm({ onSuccess }: AddProcessFormProps) {
 					return
 				}
 
-				const processData: InsertProcessInput = {
+				const processData: ProcessInput = {
 					case_number: data.case_number,
 					tribunal_name: data.tribunal_name,
 					area: data.area as ProcessAreaType,
 					status: data.status as ProcessStatusType,
-					
+
 					parties: {
 						defendant: {
 							name: data.defendant.name,

@@ -1,22 +1,13 @@
 'use client'
 
-import { convexQuery } from '@convex-dev/react-query'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
 
-const SCALE_TIME = 10 * 60 * 1000 // 10min
-
 export function useQueryProcesses() {
-	const { data, isLoading, isError } = useQuery({
-		...convexQuery(api.processes.findMany, {}),
-		initialData: [],
-		staleTime: SCALE_TIME,
-		gcTime: 10000,
-	})
+	const data = useQuery(api.processes.listProcesses)
 
 	return {
-		processes: data,
-		isLoading: isLoading,
-		isError,
+		processes: data ?? [],
+		isLoading: data ?? false,
 	}
 }

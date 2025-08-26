@@ -14,16 +14,16 @@ import { PROCESS_STATUS } from '@/constants/process'
 import type { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { useState } from 'react'
-import { DeleteProcessDialog } from './delete-process-dialog'
-import { EditProcessDialog } from './edit-process-dialog'
-import { ViewProcessDialog } from './view-process-dialog'
+import type { DataTableOutput } from './data-table'
+// import { DeleteProcessDialog } from './delete-process-dialog'
+// import { EditProcessDialog } from './edit-process-dialog'
 
-export const columns: ColumnDef<Process>[] = [
+export const columns: ColumnDef<DataTableOutput>[] = [
 	{
-		accessorKey: 'register',
+		accessorKey: 'caseNumber',
 		header: 'Número do Processo',
 		cell: ({ row }) => (
-			<div className="font-medium">{row.getValue('register')}</div>
+			<div className="font-medium">{row.getValue('caseNumber')}</div>
 		),
 	},
 	{
@@ -100,7 +100,7 @@ export const columns: ColumnDef<Process>[] = [
 		},
 	},
 	{
-		accessorKey: '_creationTime',
+		accessorKey: 'createdAt',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -113,7 +113,7 @@ export const columns: ColumnDef<Process>[] = [
 			)
 		},
 		cell: ({ row }) => {
-			const timestamp = row.getValue('_creationTime') as number
+			const timestamp = row.getValue('createdAt') as number
 			const date = new Date(timestamp)
 			return (
 				<div className="font-medium">{date.toLocaleDateString('pt-BR')}</div>
@@ -141,7 +141,9 @@ export const columns: ColumnDef<Process>[] = [
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Ações</DropdownMenuLabel>
 							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(process.register)}
+								onClick={() =>
+									navigator.clipboard.writeText(process.caseNumber)
+								}
 							>
 								Copiar número do processo
 							</DropdownMenuItem>
@@ -163,7 +165,7 @@ export const columns: ColumnDef<Process>[] = [
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					<ViewProcessDialog
+					{/* <ViewProcessDialog
 						process={process}
 						open={viewOpen}
 						onOpenChange={setViewOpen}
@@ -179,7 +181,7 @@ export const columns: ColumnDef<Process>[] = [
 						process={process}
 						open={deleteOpen}
 						onOpenChange={setDeleteOpen}
-					/>
+					/> */}
 				</>
 			)
 		},

@@ -9,15 +9,26 @@ import {
 } from '@/components/ui/data-table-wrapper'
 import { PROCESS_STATUS } from '@/constants/process'
 import { useQueryProcesses } from '@/hooks/process/use-query-process'
-
-interface DataTableProps<TData, TValue> {
+import { processTableDTO } from '../shared/process-table-dto'
+interface IDataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
+}
+
+export interface IDataTableOutput {
+	id: string
+	createdAt: number
+	caseNumber: string
+	client: string
+	adverse: string | null
+	status: string
 }
 
 export function DataTable<TData, TValue>({
 	columns,
-}: DataTableProps<TData, TValue>) {
-	// const { processes } = useQueryProcesses()
+}: IDataTableProps<TData, TValue>) {
+	const { processes } = useQueryProcesses()
+
+	const tableData: IDataTableOutput[] = processes.map(processTableDTO)
 
 	const filters: FilterConfig[] = [
 		{
@@ -28,18 +39,18 @@ export function DataTable<TData, TValue>({
 	]
 
 	const columnLabels: ColumnLabelConfig = {
-		register: 'Número do Processo',
+		caseNumber: 'Número do Processo',
 		client: 'Cliente',
 		adverse: 'Parte Adversa',
 		status: 'Status',
-		_creationTime: 'Data de Criação',
+		createdAt: 'Data de Criação',
 	}
 
 	return (
 		<DataTableWrapper
 			columns={columns}
-			data={([]) as TData[]}
-			searchColumn="register"
+			data={tableData as TData[]}
+			searchColumn="caseNumber"
 			searchPlaceholder="Filtrar por número do processo ou cliente..."
 			filters={filters}
 			columnLabels={columnLabels}
